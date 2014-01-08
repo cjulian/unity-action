@@ -5,10 +5,10 @@ using System.Collections;
 
 // This script requires a circular capsule collider to prevent jittering during collisions.
 // A good starting point for responsive control is:
-// mass = 10, drag = 17, forceToAdd = 2300
+// mass = 10, drag = 17, forceToAdd = 2400
 public class PlayerMovementInertia : MonoBehaviour {
 	
-	public float maxForceToAdd = 2300f;
+	public float maxForceToAdd = 2400f;
 
 	void Start () {
 	}
