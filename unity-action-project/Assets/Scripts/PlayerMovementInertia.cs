@@ -6,6 +6,10 @@ using System.Collections;
 // This script requires a circular capsule collider to prevent jittering during collisions.
 // A good starting point for responsive control is:
 // mass = 10, drag = 17, forceToAdd = 2400
+//
+// This script can be used for either topdown or sidescroller movement.
+// For topdown physics, make sure to change the gravity settings to -z through project settings
+// or through code.
 public class PlayerMovementInertia : MonoBehaviour {
 	
 	public float maxForceToAdd = 2400f;
