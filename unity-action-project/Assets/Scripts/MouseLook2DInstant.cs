@@ -25,7 +25,6 @@ public class MouseLook2DInstant : MonoBehaviour
 		Vector3 targetDirection = Input.mousePosition - objScreenPosition;
 		float angle = (Mathf.Atan2(targetDirection.y, targetDirection.x) * Mathf.Rad2Deg) - objStartAngle;
 
-
 		obj.transform.rotation = Quaternion.Euler(new Vector3(0, -angle, 0));
 	}
 }

@@ -2,7 +2,6 @@
 using System.Collections;
 [RequireComponent(typeof(Rigidbody))]
 
-
 // This script requires a circular capsule collider to prevent jittering during collisions.
 // A good starting point for responsive control is:
 // mass = 10, drag = 17, forceToAdd = 2400
