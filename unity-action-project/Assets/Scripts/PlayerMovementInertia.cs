@@ -8,7 +8,7 @@ using System.Collections;
 // mass = 10, drag = 17, forceToAdd = 2400
 //
 // This script can be used for either topdown or sidescroller movement.
-// For topdown physics, make sure to change the gravity settings to -z through project settings
+// For topdown physics, make sure to move directionVector Vertical input to z-axis
 // or through code.
 public class PlayerMovementInertia : MonoBehaviour {
 	
@@ -19,7 +19,7 @@ public class PlayerMovementInertia : MonoBehaviour {
 
 	void FixedUpdate () {
 		// Get player input
-		Vector3 directionVector = new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), 0);
+		Vector3 directionVector = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
 		
 		if (directionVector != Vector3.zero) {
 			// Save the direction vector magnitude before normalization for later use
