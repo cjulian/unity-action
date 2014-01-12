@@ -4,7 +4,7 @@ using System.Collections;
 public class MouseLook2DGradual : MonoBehaviour
 {
 	public GameObject obj;
-	public float rotationSpeed = 3;
+	public float rotationSpeed = 4;
 
 	// Use this for initialization
 	void Start ()

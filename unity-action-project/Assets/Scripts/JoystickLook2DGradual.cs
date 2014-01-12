@@ -1,52 +1,50 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class JoystickLook2DGradual : MonoBehaviour
-{
+public class JoystickLook2DGradual : MonoBehaviour {
+
 	// The object that will be rotating to look at the mouse pointer.
 	public GameObject obj;
-	public float rotationSpeed = 3;
+
+	// The speed of rotation.  Higher numbers means faster rotation.
+	public float rotationSpeed = 4;
 	
-	// The angle that the target is pointing in when the scene loads.
+	// The angle that the object is facing in when the script starts.
+	// 360 > objStartAngle >= 0
 	// 0 corresponds to facing down the positive X axis.
 	public float objStartAngle = 0;
 
+	// used for tracking input across frame updates
 	private float prevInputX = 0;
 	private float prevInputY = 0;
 
-	// Use this for initialization
-	void Start ()
-	{
-		if(!obj)
-		{
+
+	void Start () {
+		if(!obj) {
 			obj = this.gameObject;
 		}
 
-		// TODO: these two values should be generated from objStartAngle... but I don't know how!
-		prevInputX = 0;
-		prevInputY = -1;
+		objStartAngle %= 360;
+		getCoordinatesFromAngle(objStartAngle, out prevInputX, out prevInputY);
 	}
 	
-	// Update is called once per frame
-	void Update () {
 
-		// Right analog
+	void Update () {
+		// Get right stick input
 		float inputX = Input.GetAxisRaw("AimHorizontal");
 		float inputY = Input.GetAxisRaw("AimVertical");
 
-		// if no input detected from right stick...
+		// If no input detected from right stick...
 		if(inputX == 0 && inputY == 0) {
 
-			// then check if there's input on left stick and use that.
-			float inputX2 = Input.GetAxisRaw("Horizontal");
-			float inputY2 = Input.GetAxisRaw("Vertical");
+			// then use the left stick input.
+			inputX = Input.GetAxisRaw("Horizontal");
+			inputY = Input.GetAxisRaw("Vertical");
 
-			if(inputX2 != 0 || inputY2 != 0) {
-				inputX = inputX2;
-				inputY = inputY2;
+			// If no input detected from left stick...
+			if(inputX == 0 && inputY == 0) {
 
-			// Otherwise, there's no input so use whatever the last input was.
-			} else {
+				// then use whatever the last input was.
 				inputX = prevInputX;
 				inputY = prevInputY;
 			}
@@ -54,10 +52,43 @@ public class JoystickLook2DGradual : MonoBehaviour
 		
 		float angle = (Mathf.Atan2(inputY, inputX) * Mathf.Rad2Deg) - objStartAngle;
 		Quaternion targetRotation = Quaternion.Euler(new Vector3(0, -angle, 0));
-		float rotationAngle = (Quaternion.Angle(obj.transform.rotation, targetRotation));
-		obj.transform.rotation = Quaternion.Slerp(obj.transform.rotation, targetRotation, rotationSpeed * 180 / rotationAngle * Time.deltaTime);
+
+		if(obj.transform.rotation != targetRotation) {
+			angle = (Quaternion.Angle(obj.transform.rotation, targetRotation));
+			obj.transform.rotation = Quaternion.Slerp(obj.transform.rotation, targetRotation, rotationSpeed * 180 / angle * Time.deltaTime);
+		}
 
 		prevInputX = inputX;
 		prevInputY = inputY;
+	}
+
+
+	// Given an angle, sets x and y to values corresponding to that angle.
+	// eg. for angle = 0, x = 1, y = 0
+	void getCoordinatesFromAngle(float angle, out float x, out float y) {
+		if(angle == 90){
+			x = 0;
+			y = 1;
+		} else if(angle == 270){
+			x = 0;
+			y = -1;
+		} else {
+			y = Mathf.Tan(angle * (Mathf.Deg2Rad));
+
+			if (y >= 0) {
+				if (angle < 90) {
+					x = 1;
+				} else {
+					x = -1;
+				}
+			} else {
+				if (angle > 270) {
+					x = 1;
+				} else {
+					x = -1;
+					y *= -1;
+				}
+			}
+		}	
 	}
 }
