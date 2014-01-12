@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MouseLook2DGradual : MonoBehaviour
+public class MouseLook2D : MonoBehaviour
 {
 	public GameObject obj;
 	public float rotationSpeed = 4;
