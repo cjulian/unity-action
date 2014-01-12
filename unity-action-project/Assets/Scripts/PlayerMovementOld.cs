@@ -11,7 +11,6 @@ public class PlayerMovementOld : MonoBehaviour {
 	public float maxSpeed = 7.0f;
 	public bool useInertia = false;
 	
-	private ForceMode forceMode = ForceMode.Force;
 	private Vector3 previousForce = Vector3.zero;
 	
 	void Start () {

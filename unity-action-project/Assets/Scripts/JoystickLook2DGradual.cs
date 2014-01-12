@@ -14,9 +14,16 @@ public class JoystickLook2DGradual : MonoBehaviour {
 	// 0 corresponds to facing down the positive X axis.
 	public float objStartAngle = 0;
 
+
+	// If true then last aim direction is used when no direction input detected
+	// If false, movement direction is used as aim direction when no input detected
+	public bool preserveDirection = true;
+
 	// used for tracking input across frame updates
 	private float prevInputX = 0;
 	private float prevInputY = 0;
+	private Quaternion targetRotation;
+	private bool targetRotationSet = false;
 
 
 	void Start () {
@@ -30,36 +37,47 @@ public class JoystickLook2DGradual : MonoBehaviour {
 	
 
 	void Update () {
+		bool usePrevRotation = false;
+
 		// Get right stick input
 		float inputX = Input.GetAxisRaw("AimHorizontal");
 		float inputY = Input.GetAxisRaw("AimVertical");
 
-		// If no input detected from right stick...
+		// Check if right stick position has no input
 		if(inputX == 0 && inputY == 0) {
 
-			// then use the left stick input.
-			inputX = Input.GetAxisRaw("Horizontal");
-			inputY = Input.GetAxisRaw("Vertical");
+			// Use the left stick input if we're not preserving direction
+			if(!preserveDirection) {
+				inputX = Input.GetAxisRaw("Horizontal");
+				inputY = Input.GetAxisRaw("Vertical");
+			}
 
-			// If no input detected from left stick...
-			if(inputX == 0 && inputY == 0) {
-
-				// then use whatever the last input was.
+			// If preserving direction or no input detected
+			// then use the previous frame's input
+			if(preserveDirection || (inputX == 0 && inputY == 0)) {
 				inputX = prevInputX;
 				inputY = prevInputY;
+				usePrevRotation = true;
 			}
-		}
-		
-		float angle = (Mathf.Atan2(inputY, inputX) * Mathf.Rad2Deg) - objStartAngle;
-		Quaternion targetRotation = Quaternion.Euler(new Vector3(0, -angle, 0));
-
-		if(obj.transform.rotation != targetRotation) {
-			angle = (Quaternion.Angle(obj.transform.rotation, targetRotation));
-			obj.transform.rotation = Quaternion.Slerp(obj.transform.rotation, targetRotation, rotationSpeed * 180 / angle * Time.deltaTime);
 		}
 
 		prevInputX = inputX;
 		prevInputY = inputY;
+		float angle = 0;
+
+		// calculate new target angle if no target has been set or if
+		// we don't want to use the previous rotation
+		if(!usePrevRotation || !targetRotationSet) {
+			angle = (Mathf.Atan2(inputY, inputX) * Mathf.Rad2Deg) - objStartAngle;
+			targetRotation = Quaternion.Euler(new Vector3(0, -angle, 0));
+			targetRotationSet = true;
+		}
+
+		angle = (Quaternion.Angle(obj.transform.rotation, targetRotation));
+
+		if(angle > 0.1) {
+			obj.transform.rotation = Quaternion.Slerp(obj.transform.rotation, targetRotation, rotationSpeed * (180 / angle) * Time.deltaTime);
+		}
 	}
 
 
