@@ -6,7 +6,7 @@ using System.Collections;
 // This script can be used for either topdown or sidescroller movement.
 // For topdown physics, make sure to change the gravity settings to -z through project settings
 // or through code.
-public class PlayerMovementOld : MonoBehaviour {
+public class PlayerMovement_Old : MonoBehaviour {
 	
 	public float maxSpeed = 7.0f;
 	public bool useInertia = false;

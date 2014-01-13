@@ -2,16 +2,18 @@
 using System.Collections;
 [RequireComponent(typeof(Rigidbody))]
 
-
+// This script requires a circular capsule collider to prevent jittering during collisions.
+// A good starting point for responsive control is:
+// mass = 10, drag = 17, forceToAdd = 2400
+//
 // This script can be used for either topdown or sidescroller movement.
-// For topdown physics, make sure to change the gravity settings to -z through project settings
+// For topdown physics, make sure to move directionVector Vertical input to z-axis
 // or through code.
 public class PlayerMovement : MonoBehaviour {
 	
-	public float maxSpeed = 7.0f;
+	public float maxForceToAdd = 2400f;
 
 	void Start () {
-		this.transform.rigidbody.drag = 1.0f;
 	}
 
 	void FixedUpdate () {
@@ -24,22 +26,14 @@ public class PlayerMovement : MonoBehaviour {
 			
 			// Normalize the direction vector
 			directionVector = directionVector / directionVector.magnitude;
-			
-			// Determine player speed based on magnitude of input (vectorMagnitude).  We limit the magnitude to 1 so that
-			// the speed never goes over maxSpeed.  If we didn't do this, the player could move faster
-			// than maxSpeed when moving diagonally on keyboard.
-			float desiredSpeed = vectorMagnitude >= 1 ? maxSpeed : maxSpeed * vectorMagnitude;
 
-			// Get rid of any momentum
-			this.transform.rigidbody.velocity = Vector3.zero;
+			// Add force based on magnitude of player input... but never let force be higher than maxForceToAdd
+			float currForceToAdd = Mathf.Min(maxForceToAdd, maxForceToAdd * vectorMagnitude);
 
-			// Add enough force to reach desired speed.
+			// Add enough force to change velocity to the desired speed.
 			// This is done instantaneously using ForceMode.Impulse.
-			this.transform.rigidbody.AddForce(directionVector * desiredSpeed * transform.rigidbody.mass, ForceMode.Impulse);
-			
-		} else {
-			// Get rid of any momentum
-			this.transform.rigidbody.velocity = Vector3.zero;
+			// To reach desired speed we make the magnitude of the force equal to the desired speed (assuming drag is 1).
+			this.transform.rigidbody.AddForce(directionVector * currForceToAdd, ForceMode.Force);		
 		}
 	}
 }

@@ -3,31 +3,32 @@ using System.Collections;
 
 public class MouseLook2D : MonoBehaviour
 {
+	// The object that will be rotating based on joystick input.
 	public GameObject obj;
-	public float rotationSpeed = 4;
-
-	// Use this for initialization
+	
+	// Rotation speed, based on the time it should take to turn 180 degrees.
+	public float turnTime180 = 0.3f;
+	
 	void Start ()
 	{
-		if(!obj)
-		{
-			obj = this.gameObject;
-		}
+		// if no object assigned, then use this game object
+		if (!obj) {	obj = this.gameObject; }
 	}
 	
-	// Update is called once per frame
-	void Update ()
-	{
-		Plane playerPlane = new Plane(Vector3.up, obj.transform.position);
-		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-		float hitDist = 0.0f;
+	void Update () {
+		// get current object position in screen space
+		Vector3 objScreenPosition = Camera.main.WorldToScreenPoint(obj.transform.position);
 
-		if(playerPlane.Raycast(ray, out hitDist)) 
-		{
-			Vector3 targetPoint = ray.GetPoint(hitDist);
-			Quaternion targetRotation = Quaternion.LookRotation(targetPoint - obj.transform.position);
-			float rotationAngle = (Quaternion.Angle(obj.transform.rotation, targetRotation));
-			obj.transform.rotation = Quaternion.Slerp(obj.transform.rotation, targetRotation, (rotationSpeed / (rotationAngle / 180)) * Time.deltaTime);
-		}
+		// get the direction from the object position to the mouse position
+		Vector3 targetDirection = Input.mousePosition - objScreenPosition;
+
+		// get the quaternion corresponding to rotation that would have the object looking in the target direction
+		Quaternion targetRotation = Quaternion.LookRotation(new Vector3(targetDirection.x, 0.0f, targetDirection.y), Vector3.up);
+
+		// rotate the object gradually in that direction based on time required to turn 180 degrees and angle of target rotation
+		float angle = Quaternion.Angle(obj.transform.rotation, targetRotation);
+		if (angle > 0.1) {
+			obj.transform.rotation = Quaternion.Slerp(obj.transform.rotation, targetRotation, (180/ angle) * (Time.deltaTime / turnTime180));
+		}	
 	}
 }

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class JoystickLook2DInstant : MonoBehaviour
+public class JoystickLook2D_Instant : MonoBehaviour
 {
 	// The object that will be rotating to look at the mouse pointer.
 	public GameObject obj;
