@@ -13,13 +13,18 @@ public class PlayerMovement : MonoBehaviour {
 	
 	public float maxForceToAdd = 2400f;
 
+	void Awake () {
+
+	}
+
 	void Start () {
 	}
 
 	void FixedUpdate () {
 		// Get player input
-		Vector3 directionVector = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-		
+		Vector2 moveAxis = InputManager.GetMoveAxisVector();
+		Vector3 directionVector = new Vector3(moveAxis.x, 0, moveAxis.y);
+
 		if (directionVector != Vector3.zero) {
 			// Save the direction vector magnitude before normalization for later use
 			float vectorMagnitude = directionVector.magnitude;
@@ -30,9 +35,7 @@ public class PlayerMovement : MonoBehaviour {
 			// Add force based on magnitude of player input... but never let force be higher than maxForceToAdd
 			float currForceToAdd = Mathf.Min(maxForceToAdd, maxForceToAdd * vectorMagnitude);
 
-			// Add enough force to change velocity to the desired speed.
-			// This is done instantaneously using ForceMode.Impulse.
-			// To reach desired speed we make the magnitude of the force equal to the desired speed (assuming drag is 1).
+			// Add force in the direction of input
 			this.transform.rigidbody.AddForce(directionVector * currForceToAdd, ForceMode.Force);		
 		}
 	}

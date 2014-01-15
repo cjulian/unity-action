@@ -30,8 +30,9 @@ public class JoystickLook2D : MonoBehaviour {
 
 	void Update () {
 		// Get right stick input
-		float inputX = Input.GetAxisRaw("AimHorizontal");
-		float inputY = Input.GetAxisRaw("AimVertical");
+		Vector2 aimInput = InputManager.GetAimAxisVector();
+		float inputX = aimInput.x;
+		float inputY = aimInput.y;
 
 		bool useLastRotation = false;
 
@@ -44,8 +45,9 @@ public class JoystickLook2D : MonoBehaviour {
 
 			} else {
 				// or use the horizontal/vertical axes input if allowed.
-				inputX = Input.GetAxisRaw("Horizontal");
-				inputY = Input.GetAxisRaw("Vertical");
+				aimInput = InputManager.GetMoveAxisVector();
+				inputX = aimInput.x;
+				inputY = aimInput.y;
 
 				// If there is no input at all, use the last rotation.
 				if (inputX == 0 && inputY == 0) {
