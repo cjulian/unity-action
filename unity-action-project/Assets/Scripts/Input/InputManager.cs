@@ -4,38 +4,33 @@ using System.Collections;
 public class InputManager : MonoBehaviour {
 
 	public GameObject player;
-	public static float deadZoneSize = 0.2f;
+	public float deadZoneSize = 0.3f;
 	public InputDevice inputDevice = InputDevice.keyboardAndMouse;
 
 	private static Vector2 moveAxis = Vector2.zero;
 	private static Vector2 aimAxis = Vector2.zero;
-	private delegate void InputReaderDelegate();
-	private InputReaderDelegate getInput;
 
-	// Use this for initialization
 	void Awake () {
 		SetInputDevice(inputDevice);
-
-		if (inputDevice == InputDevice.joystick) {
-			getInput = GetInputDeadzone;
-		} else {
-			getInput = GetInputRaw;
-		}
 	}
 	
 	// Read and store the move and aim axes values
 	void Update () {
-		getInput();
+		if (inputDevice == InputDevice.joystick) {
+			GetInputJoystick();
+		} else {
+			GetInputKBM();
+		}
 	}
 
 	// Read mouse and keyboard input
-	void GetInputRaw() {
+	void GetInputKBM() {
 		moveAxis = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 		aimAxis = new Vector2(Input.GetAxisRaw("AimHorizontal"), Input.GetAxisRaw("AimVertical"));
 	}
 
 	// Read joystick input
-	void GetInputDeadzone() {
+	void GetInputJoystick() {
 		moveAxis = new Vector2(Input.GetAxisRaw("JoyHorizontal"), Input.GetAxisRaw("JoyVertical"));
 		if (moveAxis.magnitude > deadZoneSize) {
 			moveAxis = (moveAxis / moveAxis.magnitude) * ((moveAxis.magnitude - deadZoneSize) / (1 - deadZoneSize));
